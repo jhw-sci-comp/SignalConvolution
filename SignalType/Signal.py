@@ -59,8 +59,8 @@ class NonZeroWidthSignal(Signal):
         self.__interval = interval_arg.copy()
 
     def convolve(self, signal):
-        upper_boundaries_g = []
-        next_upper_boundaries_g = []
+        upper_boundaries_signal = []
+        next_upper_boundaries_signal = []
         integration_intervals = []
         integration_val = []
         t_val = []
@@ -70,39 +70,39 @@ class NonZeroWidthSignal(Signal):
             t_val = [t + signal.getTShift() for t in self.getInterval()]
             integration_val = [self.getVal(round(t - signal.getTShift(), 10)) for t in t_val]
         elif not isinstance(signal, Dirac):
-            s2_shift_2 = self.getMinBoundary() + signal.getMinBoundary()
-            g = list([round(s2_shift_2 - x, 10) for x in signal.getInterval()]).copy()
-            g.sort()
+            signal_shift_2 = self.getMinBoundary() + signal.getMinBoundary()
+            signal_shifted_interval = list([round(signal_shift_2 - x, 10) for x in signal.getInterval()]).copy()
+            signal_shifted_interval.sort()
 
             offset = self.getMinBoundary() + signal.getMinBoundary()
 
-            while g[0] < max(self.getInterval()):
-                g_prev = g.copy()
+            while signal_shifted_interval[0] < max(self.getInterval()):
+                signal_shifted_interval_prev = signal_shifted_interval.copy()
                 t_temp = 0.0
 
-                s2_shift = max(self.getLength(), signal.getLength())
+                signal_shift = max(self.getLength(), signal.getLength())
 
-                for x in g:
-                    upper_boundaries_g.append(min([abs(round(x - y, 10)) if y > x else s2_shift for y in self.getInterval()]))
+                for x in signal_shifted_interval:
+                    upper_boundaries_signal.append(min([abs(round(x - y, 10)) if y > x else signal_shift for y in self.getInterval()]))
 
-                s2_shift = min(upper_boundaries_g)
+                signal_shift = min(upper_boundaries_signal)
 
-                for j in range(0, len(g)):
-                    g[j] = round(g[j] + s2_shift, 10)
+                for j in range(0, len(signal_shifted_interval)):
+                    signal_shifted_interval[j] = round(signal_shifted_interval[j] + signal_shift, 10)
 
                 n = 15
                 for i in range(0, n):
-                    step_g = round(s2_shift / n, 10)
+                    step_signal = round(signal_shift / n, 10)
 
-                    t_temp = round(offset + i * step_g, 10)
+                    t_temp = round(offset + i * step_signal, 10)
                     t_val.append(t_temp)
 
-                    g_temp = [round(x + i * step_g, 10) for x in g_prev]
+                    signal_temp = [round(x + i * step_signal, 10) for x in signal_shifted_interval_prev]
 
-                    g_min = min(g_temp)
-                    g_max = max(g_temp)
-                    int_intervals_min = max(self.getMinBoundary(), g_min)
-                    int_intervals_max = min(self.getMaxBoundary(), g_max)
+                    t_min_signal = min(signal_temp)
+                    t_max_signal = max(signal_temp)
+                    int_intervals_min = max(self.getMinBoundary(), t_min_signal)
+                    int_intervals_max = min(self.getMaxBoundary(), t_max_signal)
                     integration_intervals.append(int_intervals_min)
                     integration_intervals.append(int_intervals_max)
                     int_intervals_set = set(integration_intervals)
@@ -110,9 +110,9 @@ class NonZeroWidthSignal(Signal):
                         if x > int_intervals_min and x < int_intervals_max:
                             int_intervals_set.add(x)
 
-                    for k in range(0, len(g_temp)):
-                        if g_temp[k] > int_intervals_min and g_temp[k] < int_intervals_max:
-                            int_intervals_set.add(g_temp[k])
+                    for k in range(0, len(signal_temp)):
+                        if signal_temp[k] > int_intervals_min and signal_temp[k] < int_intervals_max:
+                            int_intervals_set.add(signal_temp[k])
 
                     integration_intervals = list(int_intervals_set)
                     integration_intervals.sort()
@@ -127,11 +127,11 @@ class NonZeroWidthSignal(Signal):
                         integration_val.append(0.0)
 
                     integration_intervals.clear()
-                    g_temp.clear()
+                    signal_temp.clear()
 
-                offset += s2_shift
-                g_prev.clear()
-                upper_boundaries_g.clear()
+                offset += signal_shift
+                signal_shifted_interval_prev.clear()
+                upper_boundaries_signal.clear()
 
             t_val.append(offset)
             integration_val.append(0.0)

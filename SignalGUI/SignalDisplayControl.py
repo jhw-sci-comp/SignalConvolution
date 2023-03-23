@@ -288,7 +288,7 @@ class ControlPanel(tk.Frame):
                     self.__plot_frame.getCanvasFigures().plotConvolution(self.__plot_frame.getPlotConvolution(), t_convolution, val_convolution, self.__iodata.getSignal1Type(), self.__iodata.getSignal2Type())
                     self.__plot_frame.getCanvasFigures().draw()
                 else:
-                    raise SignalException.IntervalSizeException("Singal 2")
+                    raise SignalException.IntervalSizeException("each signal")
         except SignalException.IntervalSizeException as e:
             messagebox.showinfo(title="Interval Boundaries Exception", message="The lower boundary (t_min) of " + e.str + " must be smaller than the upper boundary (t_max). Please change at least one of the boundaries.")
 

@@ -26,7 +26,7 @@ class PlotFrame(tk.Frame):
 
         self.__canvas_figures.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-    def displaySignal1(self, signal1_type_arg, signal1val_arg, signal1_t_min_arg, signal1_t_max_arg): #signal1val_arg = signal1.getVal
+    def displaySignal1(self, signal1_type_arg, signal1val_arg, signal1_t_min_arg, signal1_t_max_arg):
         self.__plot_signals[0].clear()
         self.__plot_signals[0].axis("on")
         self.__plot_signals[0].grid(True)
